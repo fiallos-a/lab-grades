@@ -46,6 +46,9 @@ rendering.
 ```{r}
 students <- data |> distinct(id,.keep_all = T) |> select(id,group)
 
+students |>
+slice_tail(n = 5) |>
+knitr::kable()
 ```
 
 #Question 5
@@ -97,3 +100,43 @@ ggplot(q7, aes(x = semester, y = avg_grade))+
 
 ```
 
+#Question 8
+Compute the number of grades per student and include in your quarto rendering an extract of
+the resulting data frame. Make sure to keep in the data frame the id of the students but also
+their group. Include in the text a markdown table with the minimum, maximum, average and
+median number of grades per student.
+
+```{r}
+
+q8 <- data |> group_by(id,group) |> summarise(n_grades = n()) |> ungroup()
+
+summary(q8$n_grades)
+```
+
+
+#Question 9
+Create a data frame that gives for each student their id, their group and the number of grades
+they obtained in Astronomy and Celestial Navigation and include in the quarto rendering a
+small extract of the result.
+
+```{r}
+q9 <- data |> filter(course == "Astronomy and Celestial Navigation") |> group_by(id,group) |> summarise(n_grades = n()) |> ungroup() |> mutate(course = "Astronomy and Celestial Navigation")
+
+q9 |>
+slice_tail(n = 5) |>
+knitr::kable()
+```
+
+
+#Question 10
+Compute from the previous data frame the distribution of the number of grades, that is for each
+number of grades (e.g. 10) the number of students who have exactly this number of grades in
+Astronomy and Celestial Navigation. Represent graphically the results.
+
+```{r}
+
+```
+
+#Question 11
+Using a graphical representation to study whether the number of grades per student in Astron-
+omy and Celestial Navigation depends on the group.
