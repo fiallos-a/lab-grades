@@ -23,3 +23,77 @@ Give the number of grades in the data set directly in the text of your quarto fi
 
 **Answer:** 
 The data set contains `r NROW(data)` grades
+
+#Question 3
+
+Use distinct() compute the number of students on the data set and report the value directly
+in the text as in the previous question.
+
+```{r}
+unique <- distinct(data, id)
+```
+
+**Answer:** 
+The number of students in the data set is `r NROW(unique)`. 
+
+#Question 4
+
+Create a students data frame that contains one row per student and two variables, id and
+group that gives the assignment of each student to their group. Make sure that each student
+appears on only once in the data frame. Include a short extract of the data frame in the quarto
+rendering.
+
+```{r}
+students <- data |> distinct(id,.keep_all = T) |> select(id,group)
+
+```
+
+#Question 5
+
+Use a graphical representation to display the number of students per group.
+
+```{r}
+library(ggplot2)
+check <- students |> summarise( n = n()) 
+
+ggplot(students |> summarise( n = n(), .by= group), aes(x = group, y = n))+
+  geom_bar(stat = "identity") +  
+  theme_minimal() +  
+  labs(x = "Group", y = "ID", title = "Number of students per group")  
+
+```
+
+#Question 6
+
+Compute the average of all the grades in Shamanism and Spiritual Practices in each group and
+display graphically this average as a function of the group. It is recommend to use geom_col()
+for this task (read the documentation!).
+
+```{r}
+q6 <- data |> filter(course == "Shamanism and Spiritual Practices")
+
+table(data$semester)
+table(q6$semester)
+
+q6 <- q6 |> summarise(avg_grade = mean(grade), .by = group)
+
+ggplot(q6, aes(x = group, y = avg_grade))+
+  geom_col() +  
+  theme_minimal() +  
+  labs(x = "Group", y = "Average grade", title = "Average grade in Shamanisn and Spiritual Practices per group")  
+
+
+```
+
+# Question 7
+Compare graphically the distribution of the grades of the 2 semesters.
+```{r}
+q7 <- data |> summarise(avg_grade = mean(grade), .by = semester)
+
+ggplot(q7, aes(x = semester, y = avg_grade))+
+  geom_col() +  
+  theme_minimal() +  
+  labs(x = "Semester", y = "Average grade", title = "Average grade by semester")  
+
+```
+
