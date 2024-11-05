@@ -278,10 +278,33 @@ Create a data frame that gives for each student their id, their group, their fin
 defined before) and a pass variable equal to TRUE if the student pass the year (and FALSE if they
 do not).
 
+```{r}
+
+q18 <- data |>  group_by(id,group,course) |> summarise(avg_grades = mean(grade)) |> ungroup() 
+q182 <- data |>  group_by(id,group,semester) |> summarise(avg_grades = mean(grade)) |> ungroup() 
+
+q18 <- left_join(q18,q182)
+
+
+
+
+
+```
+
+
 #Question 19
 Compute and display the number of students who do not pass and yet have a final grade larger
 or equal to 10.
 
+```{r}
+
+```
+
+
 #Question 20
 Compute the pass rate per group and represent it graphically.
+
+```{r}
+
+```
 
