@@ -4,3 +4,16 @@ author: "Andres Fiallos"
 format: html
 ---
 
+#Question 1
+
+Load the data set 
+
+```{r}
+here::i_am("lab-grades.Rproj")
+library(here)
+library(vroom)
+library(dplyr)
+
+data <- vroom(here("data.csv"))
+```
+
