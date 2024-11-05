@@ -6,7 +6,7 @@ format: html
 
 #Question 1
 
-Load the data set 
+Load the data set
 
 ```{r}
 here::i_am("lab-grades.Rproj")
@@ -17,3 +17,9 @@ library(dplyr)
 data <- vroom(here("data.csv"))
 ```
 
+#Question 2
+
+Give the number of grades in the data set directly in the text of your quarto file, in a sentence of the form “The data set contains xxx grades.” where xxx is replaced by the number of grades. This must be computed from the data set.
+
+**Answer:** 
+The data set contains `r NROW(data)` grades
