@@ -235,12 +235,38 @@ this definition for the last column. Sort the data frame in decrease order of fi
 include in the quarto rendering its first five rows.
 
 ```{r}
+q16 <- data |>  group_by(id,group,course) |> summarise(avg_grades = mean(grade)) |> ungroup() 
+q16 <- q16  |>  group_by(id,group) |> summarise(final_grade = mean(avg_grades)) |> ungroup() |> arrange(-final_grade)
+
+q16 |> 
+  head(5)|>
+  knitr::kable()
 
 ```
 
 
 #Question 17
 Find a way to study differences in final grades between groups.
+
+```{r}
+
+q17 <- q16 |> 
+  mutate(quartile = ntile(`final_grade`, 4))
+
+q17 <- q17 |> group_by(group,quartile) |> summarise(n_students = n()) |> ungroup()
+
+ggplot(q17, aes(x = quartile, y = n_students))+
+  geom_col() +  
+  theme_minimal() +  
+  labs(x = "Semester", y = "Average grade", title = "Average grade by semester")  
+
+ggplot(q17, aes(x = quartile, y = n_students))+
+  geom_bar(stat = "identity") +  
+  facet_wrap(~group) +
+  theme_minimal() + 
+  labs(x = "Group", y = "ID", title = "Bar Plot of ID by Group") 
+
+```
 
 
 #Question 18
