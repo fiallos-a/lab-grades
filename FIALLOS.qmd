@@ -134,9 +134,128 @@ number of grades (e.g. 10) the number of students who have exactly this number o
 Astronomy and Celestial Navigation. Represent graphically the results.
 
 ```{r}
+table(q9$n_grades)
+q10 <- q9 |> group_by(n_grades) |> summarise(n_students = n()) |> ungroup()
+
+ggplot(q10, aes(x = n_grades, y = n_students))+
+  geom_col() +  
+  theme_minimal() +  
+  labs(x = "Number of grades", y = "Number of students", title = "Number of students by number of grades", subtitle = "Astronomy and Celestial Navigation" )  
 
 ```
 
 #Question 11
 Using a graphical representation to study whether the number of grades per student in Astron-
 omy and Celestial Navigation depends on the group.
+
+```{r}
+q11 <- q9 |> group_by(group, n_grades) |> summarise(n_students = n()) |> ungroup()
+
+ggplot(q11, aes(x = n_grades, y = n_students))+
+  geom_col() +  
+  theme_minimal() + 
+  facet_wrap(~group)
+  labs(x = "Number of grades", y = "Number of students" , title = "Number of students by number of grades and group", subtitle = "Astronomy and Celestial Navigation" )  
+```
+#Question 12
+
+Create a data frame that gives for each student their id, their group and the average of grades
+they obtained in each course. Using an adapted pivoting method, create a new data frame
+with one row per student and 12 columns: one for the id, one for the group and one per course.
+Include in the quarto rendering a small extract of the data frame with the id and group columns
+and with two of the course columns. 
+
+```{r}
+q12 <- data |>  group_by(id,group,course) |> summarise(avg_grades = mean(grade)) |> ungroup() 
+
+library(tidyr)
+q12 <- q12 |>
+  pivot_wider(id_cols = c(id, group),
+              names_from = course,
+              values_from = avg_grades)
+q12 |> 
+  select(1:4) |>
+  slice_tail(n = 5) |>
+  knitr::kable()
+
+```
+
+
+#Question 13
+Show the average grades in Environmental Stewardship as a function of the average grades in
+Warfare and Diplomacy. Make sure to maximise the readability of the proposed representation.
+
+```{r}
+ggplot(q12, aes(x = `Environmental Stewardship`, y = `Warfare and Diplomacy`))+
+  geom_point() +  
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  theme_minimal() + 
+  labs(x = "Avg grade in Environmental Stewardship", y = "Avg grade in Warfare and Diplomacy" , title = "Environmental Stewardship ~ Warfare and Diplomacy" )  
+
+```
+
+
+#Question 14
+The cor() function computes the correlation coeﬀicient between two vectors. It can be used as
+a summary function in dplyr. Using it, compute the correlation between the average grades in
+Language and Linguistics and the average grades in Astronomy and Celestial Navigation group
+by group.
+
+```{r}
+q14 <- q12 |>  group_by(group) |> summarise(correlation = cor(`Language and Linguistics`,`Astronomy and Celestial Navigation`)) |> ungroup() 
+
+q14 |> 
+  slice_tail(n = 10) |>
+  knitr::kable()
+```
+
+
+#Question 15
+Display the average grades in Language and Linguistics as a function the average grades in
+Astronomy and Celestial Navigation for the students of the group in which those grades are the
+most correlated (positively or negatively).
+
+```{r}
+q15 <- q14 |> 
+  mutate(correlation_max = max(abs(correlation), na.rm = TRUE)) |> filter(correlation_max == abs(correlation))
+
+ggplot(q12 |> filter(group == 12), aes(x = `Language and Linguistics`, y = `Astronomy and Celestial Navigation`))+
+  geom_point() +  
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  theme_minimal() + 
+  labs(x = "Avg grade in Environmental Stewardship", y = "Avg grade in Warfare and Diplomacy" , title = "Environmental Stewardship ~ Warfare and Diplomacy", subtitle = "Group 12: max correlation between grades")  
+
+```
+
+
+#Question 16
+Let us assume that the final grade of a student is the average of the averages of their grades
+for each course. Create a data frame with three columns, id, group and final grade based on
+this definition for the last column. Sort the data frame in decrease order of final grade and
+include in the quarto rendering its first five rows.
+
+```{r}
+
+```
+
+
+#Question 17
+Find a way to study differences in final grades between groups.
+
+
+#Question 18
+To pass the year, a student must fulfil the following conditions:
+• have no average grade in a course lower than 5;
+• have an average grade in each semester larger or equal to 10 (the average in a semester is
+simply the average of the average grades of the courses in the semester).
+Create a data frame that gives for each student their id, their group, their final grade (as
+defined before) and a pass variable equal to TRUE if the student pass the year (and FALSE if they
+do not).
+
+#Question 19
+Compute and display the number of students who do not pass and yet have a final grade larger
+or equal to 10.
+
+#Question 20
+Compute the pass rate per group and represent it graphically.
+
